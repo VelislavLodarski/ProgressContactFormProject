@@ -18,6 +18,7 @@ namespace ProgressContactFormProject.Tests
         public WebDriverWait ?wait;
         public CompanyPortalPage companyPortalPage;
         public ContactThankYouPage contactThankYouPage;
+        public GlobalPartnerDirectoryPage globalPartnerDirectoryPage;
 
         public Actions actions;
 
@@ -25,7 +26,10 @@ namespace ProgressContactFormProject.Tests
         public void OneTimeSetUp()
         {
             var options = new ChromeOptions();
-            options.AddUserProfilePreference("profile.password_manager_enabled", false);
+            //Headless options can be added if needed:
+            //options.AddArguments("--headless"); -> Run in headless mode
+            //options.AddArguments("--disable-gpu"); -> Disable GPU acceleration (for headless mode)
+            //options.AddArguments("--window-size=1920x1080"); -> Optional: Set window size to avoid issues with responsive pages
             options.AddArguments("--disable-search-engine-choice-screen");
 
             driver = new ChromeDriver(options);
@@ -35,16 +39,18 @@ namespace ProgressContactFormProject.Tests
 
             companyPortalPage = new CompanyPortalPage(driver);
             contactThankYouPage = new ContactThankYouPage(driver);
+            globalPartnerDirectoryPage = new GlobalPartnerDirectoryPage(driver); 
+
             companyPortalPage.OpenPage();
             companyPortalPage.ClickAcceptCookiesButton(); 
             
-        }  
+        }
 
-        //[TearDown]
-        //public void OneTimeTearDown()
-        //{
-        //    driver.Quit();
-        //    driver.Dispose();
-        //}
+        [TearDown]
+        public void OneTimeTearDown()
+        {
+            driver.Quit();
+            driver.Dispose();
+        }
     }
 }

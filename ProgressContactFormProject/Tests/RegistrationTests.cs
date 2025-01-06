@@ -71,7 +71,7 @@ namespace CompanyPortalTest.Tests
             companyPortalPage.EnterCustomMessage(1);
             companyPortalPage.ClickPrivacyPolicyHyperlink();
             // Wait for the new tab to open (adjust the wait as needed)
-            Thread.Sleep(1000);
+            
 
             // Get all window handles and ensure there is more than one
             var windowHandles = driver.WindowHandles;
@@ -87,5 +87,7 @@ namespace CompanyPortalTest.Tests
             // Assert the URL of the new tab
             Assert.That(driver.Url, Is.EqualTo("https://www.progress.com/legal/privacy-policy"), "The Privacy Policy link did not open the expected URL.");
         }
+
+    
     }
 }

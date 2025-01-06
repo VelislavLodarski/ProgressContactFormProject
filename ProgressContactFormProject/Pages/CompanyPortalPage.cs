@@ -33,6 +33,8 @@ namespace ProgressContactFormProject.Pages
         private IWebElement PhoneNumberField => driver.FindElement(By.Id("Textbox-5"));
         private IWebElement MessageField => driver.FindElement(By.Id("Textarea-1"));
 
+        private IWebElement ParthnersHyperlink => driver.FindElement(By.XPath("//p[contains(text(),'By submitting this form, you understand and agree ')]//a[normalize-space()='Partners']"));
+
         private IWebElement PrivacyPolicyHyperlink => driver.FindElement(By.XPath("//p[contains(text(),'By submitting this form, I understand and acknowle')]//a[normalize-space()='Privacy Policy']"));
 
         // Constructor
@@ -48,11 +50,23 @@ namespace ProgressContactFormProject.Pages
             driver.Navigate().GoToUrl(CompanyUrl);
         }
 
+
         public void ClickPrivacyPolicyHyperlink()
         {
             // Wait for the element to be clickable, if necessary
             WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-            IWebElement privacyPolicyLink = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.XPath("//p[contains(text(),'By submitting this form, I understand and acknowle')]//a[normalize-space()='Privacy Policy']")));
+            IWebElement privacyPolicyLink = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(PrivacyPolicyHyperlink));
+
+            // Click on the Privacy Policy link
+            privacyPolicyLink.Click();
+        }
+
+
+        public void ClickParthnersHyperlink()
+        {
+            // Wait for the element to be clickable, if necessary
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            IWebElement privacyPolicyLink = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(ParthnersHyperlink));
 
             // Click on the Privacy Policy link
             privacyPolicyLink.Click();
@@ -171,9 +185,10 @@ namespace ProgressContactFormProject.Pages
             if (string.IsNullOrEmpty(productName))
             {
                 // Select the default option by clicking it
-                var defaultOption = driver.FindElement(By.Id("DropdownListFieldCustomValueController"));
+                var defaultOption = driver.FindElement(By.XPath("//option[normalize-space()='Select product']"));
                 defaultOption.Click();
-
+                Thread.Sleep(3000);
+                
             }
             else
             {
@@ -217,11 +232,12 @@ namespace ProgressContactFormProject.Pages
             string customMessage = StringGenerator.GenerateRandomString(length); // Generate the message
             MessageField.SendKeys(customMessage); // Send the custom message
         }
-        public void EnterMessage(string message)
+        public string GetCounterValue()
         {
-            // Send the provided message to the Message field
-            MessageField.SendKeys(message);
+            IWebElement counterElement = driver.FindElement(By.XPath("//span[@class='TxtCounter-Number']"));
+            return counterElement.Text;
         }
+
 
         public bool IsNameFieldChanged(string expectedHeaderXPath)
         {
@@ -281,6 +297,57 @@ namespace ProgressContactFormProject.Pages
                     Console.WriteLine("Error processing element: " + ex.Message);
                 }
             }
+        }
+
+        public bool IsInvalidEmailFormatMessageVisible()
+        {
+            try
+            {
+                var message = driver.FindElement(By.XPath("//p[normalize-space()='Invalid email format']"));
+                return message.Displayed;
+            }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
+        }
+
+        public void ClickElement(By locator)
+        {
+            IWebElement element = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(locator));
+            ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", element);
+            element.Click();
+        }
+
+        public bool IsFirstNameErrorVisible()
+        {
+            try
+            {
+                var error = driver.FindElement(By.XPath("(//p[@role='alert'][normalize-space()='Invalid format'])[1]"));
+                return error.Displayed;
+            }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
+        }
+
+        public bool IsLastNameErrorVisible()
+        {
+            try
+            {
+                var error = driver.FindElement(By.XPath("(//p[@role='alert'][normalize-space()='Invalid format'])[2]"));
+                return error.Displayed;
+            }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
+        }
+
+        public bool AreBothInvalidFormatErrorsVisible()
+        {
+            return IsFirstNameErrorVisible() && IsLastNameErrorVisible();
         }
     }
 }
