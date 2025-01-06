@@ -5,7 +5,7 @@
 [![Google Chrome](https://img.shields.io/badge/tested%20on-Google%20Chrome-4285F4.svg)](https://www.google.com/chrome/)
 [![Selenium](https://img.shields.io/badge/tested%20with-Selenium-43B02A.svg)](https://www.selenium.dev/)
 
-Welcome to my repository, part of Progress interviewing process!
+Welcome to my repository, part of Progress interview process!
 
 ---
 
